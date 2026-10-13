@@ -1,0 +1,31 @@
+// Clásico: los ojos cuadrados redondeados del principio (estilo RoboEyes).
+#pragma once
+#include "cara.h"
+#include "emociones.h"
+
+#define RGB(r, g, b) (uint16_t)((((r) & 0xF8) << 8) | (((g) & 0xFC) << 3) | ((b) >> 3))
+
+const uint16_t COLOR_CARA = RGB(110, 200, 255);
+const int SEPARACION = 42;
+const int OJOS_Y = 62, OJO_ANCHO = 62, OJO_ALTO = 62;
+const int OJO_REDONDEZ = 16;
+const int BOCA_Y = 140;
+// Una cara por emoción, en el orden de enum Emocion (emociones.h)
+const Expresion CARAS[] = {
+  {OJOS_PASTILLA,     BOCA_DIENTES,   PARPADEA | MIRA},  // Normal
+  {OJOS_FELICES,      BOCA_GRANDE,    SALTA},  // Contento
+  {OJOS_GUINO,        BOCA_LENGUA,    NADA},  // Burlón
+  {OJOS_REDONDOS,     BOCA_O,         NADA},  // Sorprendido
+  {OJOS_MOLESTOS,     BOCA_RECTA,     PARPADEA},  // Irritado
+  {OJOS_ENFADADOS,    BOCA_TRISTE,    PARPADEA},  // Enfadado
+  {OJOS_ENFADADOS,    BOCA_DIENTES,   TIEMBLA},  // Furioso
+  {OJOS_ESPIRAL,      BOCA_ONDULADA,  NADA},  // Mareado
+  {OJOS_PEQUENOS,     BOCA_O_PEQUENA, TIEMBLA | SUDOR | PARPADEA},  // Asustado
+  {OJOS_APRETADOS,    BOCA_ONDULADA,  TIEMBLA},  // Protesta
+  {OJOS_CURIOSOS,     BOCA_PEQUENA,   PARPADEA},  // Curioso
+  {OJOS_SOMNOLIENTOS, BOCA_RECTA,     PARPADEA, 0, 8},  // Tumbado
+  {OJOS_X,            BOCA_RECTA,     INTERFERENCIA},  // Modo hacker
+  {OJOS_SOMNOLIENTOS, BOCA_RECTA,     PARPADEA, 0, 10},  // Aburrido
+  {OJOS_CERRADOS,     BOCA_PEQUENA,   ZZZ},  // Dormido
+  {OJOS_SOMNOLIENTOS, BOCA_BOSTEZO,   NADA},  // Despertando
+};
