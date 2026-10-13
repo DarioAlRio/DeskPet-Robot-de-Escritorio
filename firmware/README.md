@@ -13,7 +13,8 @@ firmware/
 │   ├── eventos.h       Lista de eventos de los sensores
 │   ├── tactil.*        TTP223: toque, caricia, toques seguidos
 │   ├── movimiento.*    MPU6050: golpes, sacudidas, levantado, postura
-│   └── emociones.*     Máquina de emociones y ojos (RoboEyes)
+│   ├── emociones.*     Máquina de emociones
+│   └── cara.*          Ojos y boca estilo Dasai Mochi
 └── experimentos/    Pruebas que no forman parte del firmware
 ```
 
