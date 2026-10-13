@@ -17,25 +17,29 @@ const uint16_t NEGRO      = 0x0000;
 const uint16_t ROJO       = RGB(255, 30, 40);
 const uint16_t GRIS_BORDE = RGB(45, 45, 45);
 
-#define OJOS_ANCHO 180  // zona donde se mueven los ojos: cabe entera dentro del círculo
+#define OJOS_ANCHO 180  // zona donde se mueven los ojos
 #define OJOS_ALTO  140
+#define CARA_ALTO  170  // ojos + boca debajo; todo cabe dentro del círculo
+
+static void dibujarBoca(GFXcanvas1 &lienzo);
 
 // ---------------------------------------------------------------------------
-// Pantalla: RoboEyes dibuja en un lienzo de 1 bit (como en una OLED) y aquí se
-// pinta en rojo, centrado dentro del círculo.
+// Pantalla: RoboEyes dibuja los ojos en un lienzo de 1 bit (como en una OLED),
+// aquí se añade la boca y se pinta todo en rojo, centrado dentro del círculo.
 // ---------------------------------------------------------------------------
 
 class PantallaRedonda : public GFXcanvas1 {
  public:
   uint16_t color = ROJO;
 
-  PantallaRedonda() : GFXcanvas1(OJOS_ANCHO, OJOS_ALTO) {}
+  PantallaRedonda() : GFXcanvas1(OJOS_ANCHO, CARA_ALTO) {}
 
   void clearDisplay() { fillScreen(0); }
 
-  // Envía solo la zona de los ojos y solo si ha cambiado desde la última vez
+  // Envía solo la zona de la cara y solo si ha cambiado desde la última vez
   void display() {
-    static uint8_t anterior[(OJOS_ANCHO + 7) / 8 * OJOS_ALTO];
+    dibujarBoca(*this);
+    static uint8_t anterior[(OJOS_ANCHO + 7) / 8 * CARA_ALTO];
     static uint16_t anteriorColor = 0;
     if (anteriorColor == color && memcmp(anterior, getBuffer(), sizeof(anterior)) == 0) return;
     memcpy(anterior, getBuffer(), sizeof(anterior));
@@ -43,8 +47,8 @@ class PantallaRedonda : public GFXcanvas1 {
 
     static uint16_t linea[OJOS_ANCHO];
     tft.startWrite();
-    tft.setAddrWindow((LADO - OJOS_ANCHO) / 2, OFFSET_Y + (LADO - OJOS_ALTO) / 2, OJOS_ANCHO, OJOS_ALTO);
-    for (int y = 0; y < OJOS_ALTO; y++) {
+    tft.setAddrWindow((LADO - OJOS_ANCHO) / 2, OFFSET_Y + (LADO - CARA_ALTO) / 2, OJOS_ANCHO, CARA_ALTO);
+    for (int y = 0; y < CARA_ALTO; y++) {
       for (int x = 0; x < OJOS_ANCHO; x++) linea[x] = getPixel(x, y) ? color : NEGRO;
       tft.writePixels(linea, OJOS_ANCHO);
     }
@@ -57,6 +61,91 @@ static PantallaRedonda pantalla;
 // Va después del resto de includes: define macros cortas (N, S, E, W, ON, OFF…)
 #include <FluxGarage_RoboEyes.h>
 static RoboEyes<PantallaRedonda> ojos(pantalla);
+
+// ---------------------------------------------------------------------------
+// Boca: se dibuja debajo de los ojos y los sigue cuando miran a los lados
+// ---------------------------------------------------------------------------
+
+enum Boca {
+  SONRISA_DIENTES, SONRISA_GRANDE, TORCIDA, BOCA_O, PEQUENA_O, FRUNCIDA,
+  FRUNCIDA_DIENTES, ONDULADA, APRETADA, RECTA, PEQUENA, BOSTEZO, GLITCH
+};
+
+static Boca bocaActual = SONRISA_DIENTES;
+static uint32_t bocaDesde = 0;
+
+static void lineaGruesa(GFXcanvas1 &c, int x0, int y0, int x1, int y1) {
+  for (int d = -1; d <= 1; d++) {
+    c.drawLine(x0, y0 + d, x1, y1 + d, 1);
+    c.drawLine(x0 + d, y0, x1 + d, y1, 1);
+  }
+}
+
+// Curva tipo sonrisa. flecha > 0: el centro baja (‿); < 0: sube (∩).
+// incl inclina la boca; dientes > 0 la convierte en zigzag de esa altura.
+static void curva(GFXcanvas1 &c, int cx, int cy, int ancho, float flecha, float incl, int segmentos,
+                  float dientes) {
+  int px = 0, py = 0;
+  for (int i = 0; i <= segmentos; i++) {
+    float u = -1 + 2.0f * i / segmentos;
+    int x = cx + u * ancho / 2;
+    int y = cy + flecha * (1 - u * u) + incl * u * ancho / 2 + ((i % 2) ? dientes / 2 : -dientes / 2);
+    if (i > 0) lineaGruesa(c, px, py, x, y);
+    px = x;
+    py = y;
+  }
+}
+
+static void anillo(GFXcanvas1 &c, int cx, int cy, int r) {
+  for (int g = 0; g < 3; g++) c.drawCircle(cx, cy, r - g, 1);
+}
+
+static void dibujarBoca(GFXcanvas1 &c) {
+  // Sigue a los ojos: centrada entre los dos y un poco por debajo
+  int cx = (ojos.eyeLx + ojos.eyeRx + ojos.eyeRwidthCurrent) / 2;
+  int centroOjos = ojos.eyeLy + ojos.eyeLheightCurrent / 2;
+  int cy = constrain(150 + (centroOjos - OJOS_ALTO / 2) / 2, 145, 158);
+  uint32_t t = millis() - bocaDesde;
+
+  switch (bocaActual) {
+    case SONRISA_DIENTES:  curva(c, cx, cy, 60, 6, 0, 8, 8); break;
+    case SONRISA_GRANDE:   curva(c, cx, cy - 2, 80, 10, 0, 10, 10); break;
+    case TORCIDA:          curva(c, cx + 6, cy, 56, 5, -0.15f, 8, 7); break;
+    case BOCA_O:           anillo(c, cx, cy + 2, 10); break;
+    case PEQUENA_O:        anillo(c, cx + random(-1, 2), cy + 2, 6); break;
+    case FRUNCIDA:         curva(c, cx, cy + 6, 50, -8, 0, 10, 0); break;
+    case FRUNCIDA_DIENTES: curva(c, cx + random(-2, 3), cy + 6, 60, -8, 0, 8, 8); break;
+    case RECTA:            lineaGruesa(c, cx - 20, cy + 2, cx + 20, cy + 2); break;
+    case PEQUENA:          curva(c, cx, cy, 20, 4, 0, 6, 0); break;
+    case GLITCH:           curva(c, cx + random(-4, 5), cy, 64, 6, 0, 10, 8); break;
+    case ONDULADA: {
+      int px = 0, py = 0;
+      for (int i = 0; i <= 12; i++) {
+        int x = cx - 30 + 5 * i;
+        int y = cy + 2 + sinf(i * 1.1f + t * 0.01f) * 5;
+        if (i > 0) lineaGruesa(c, px, py, x, y);
+        px = x;
+        py = y;
+      }
+      break;
+    }
+    case APRETADA: {
+      int x0 = cx - 28, x1 = cx + 28, y0 = cy - 6, y1 = cy + 10;
+      c.drawRect(x0, y0, x1 - x0, y1 - y0, 1);
+      c.drawRect(x0 + 1, y0 + 1, x1 - x0 - 2, y1 - y0 - 2, 1);
+      c.drawFastHLine(x0, (y0 + y1) / 2, x1 - x0, 1);
+      for (int x = x0 + 8; x < x1; x += 8) c.drawFastVLine(x, y0, y1 - y0, 1);
+      break;
+    }
+    case BOSTEZO: {
+      // Abre la boca poco a poco y la vuelve a cerrar
+      float p = t < 1600 ? sinf(t / 1600.0f * PI) : 0;
+      if (p > 0.1f) anillo(c, cx, cy + 2, 4 + 10 * p);
+      else curva(c, cx, cy, 20, 4, 0, 6, 0);
+      break;
+    }
+  }
+}
 
 // ---------------------------------------------------------------------------
 // Cómo se ve cada emoción con RoboEyes
@@ -112,28 +201,29 @@ static void verDespertando() { quieto(); ojos.setMood(TIRED); }
 
 struct DatosEmocion {
   const char *nombre;
+  Boca boca;
   uint8_t prioridad;  // si coinciden varias, gana la más alta
   uint16_t duracion;  // ms; 0 = dura mientras se cumpla su condición
   void (*ver)();
 };
 
 static const DatosEmocion EMOCIONES[] = {
-  {"Normal",      0, 0,    verNormal},
-  {"Contento",    2, 3000, verContento},
-  {"Burlón",      2, 2000, verBurlon},
-  {"Sorprendido", 2, 1500, verSorprendido},
-  {"Irritado",    2, 3000, verIrritado},
-  {"Enfadado",    4, 3000, verEnfadado},
-  {"Furioso",     4, 4000, verFurioso},
-  {"Mareado",     4, 3000, verMareado},
-  {"Asustado",    5, 3000, verAsustado},
-  {"Protesta",    6, 0,    verProtesta},
-  {"Curioso",     3, 0,    verCurioso},
-  {"Tumbado",     3, 0,    verTumbado},
-  {"Modo hacker", 2, 5000, verHacker},
-  {"Aburrido",    1, 0,    verAburrido},
-  {"Dormido",     1, 0,    verDormido},
-  {"Despertando", 2, 2000, verDespertando},
+  {"Normal",      SONRISA_DIENTES,   0, 0,    verNormal},
+  {"Contento",    SONRISA_GRANDE,    2, 3000, verContento},
+  {"Burlón",      TORCIDA,           2, 2000, verBurlon},
+  {"Sorprendido", BOCA_O,            2, 1500, verSorprendido},
+  {"Irritado",    FRUNCIDA,          2, 3000, verIrritado},
+  {"Enfadado",    FRUNCIDA_DIENTES,  4, 3000, verEnfadado},
+  {"Furioso",     FRUNCIDA_DIENTES,  4, 4000, verFurioso},
+  {"Mareado",     ONDULADA,          4, 3000, verMareado},
+  {"Asustado",    PEQUENA_O,         5, 3000, verAsustado},
+  {"Protesta",    APRETADA,          6, 0,    verProtesta},
+  {"Curioso",     PEQUENA,           3, 0,    verCurioso},
+  {"Tumbado",     RECTA,             3, 0,    verTumbado},
+  {"Modo hacker", GLITCH,            2, 5000, verHacker},
+  {"Aburrido",    RECTA,             1, 0,    verAburrido},
+  {"Dormido",     PEQUENA,           1, 0,    verDormido},
+  {"Despertando", BOSTEZO,           2, 2000, verDespertando},
 };
 
 // ---------------------------------------------------------------------------
@@ -177,6 +267,8 @@ static Emocion elegir(uint32_t ahora) {
 
 static void mostrar(Emocion e) {
   mostrada = e;
+  bocaActual = EMOCIONES[e].boca;
+  bocaDesde = millis();
   reiniciarOjos();
   EMOCIONES[e].ver();
   Serial.printf("Emoción: %s\n", EMOCIONES[e].nombre);
