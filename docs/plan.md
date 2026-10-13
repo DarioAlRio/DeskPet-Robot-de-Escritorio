@@ -12,7 +12,7 @@ Cada fase tiene un objetivo comprobable. No se pasa a la siguiente sin cumplir e
 
 ## Fase 1 · Ojos animados
 
-- Conectar la pantalla 0,96" y mostrar una imagen de prueba.
+- Conectar la pantalla redonda 1,28" y mostrar una imagen de prueba.
 - Dibujar dos ojos (rectángulos redondeados) con la librería TFT_eSPI o Adafruit GFX.
 - Animaciones básicas: parpadeo, mirar a izquierda y derecha, mirar arriba y abajo.
 - Dibujar en un búfer en memoria (sprite) para que la animación no parpadee.

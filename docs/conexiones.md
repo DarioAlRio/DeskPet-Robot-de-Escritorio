@@ -2,7 +2,7 @@
 
 Borrador. Se confirmará en la fase 1 con la placa real: los pines de la ESP32-C3 SuperMini pueden variar según el fabricante.
 
-## Pantalla 0,96" (SPI, ST7735)
+## Pantalla redonda 1,28" (SPI, GC9A01)
 
 | Pantalla | ESP32-C3 |
 |---|---|
@@ -14,6 +14,8 @@ Borrador. Se confirmará en la fase 1 con la placa real: los pines de la ESP32-C
 | DC | GPIO 0 |
 | CS | GPIO 7 |
 | BLK (retroiluminación) | 3V3 |
+
+Algunos módulos GC9A01 no traen pin BLK; en ese caso la retroiluminación va siempre encendida.
 
 ## MPU6050 (I2C)
 
