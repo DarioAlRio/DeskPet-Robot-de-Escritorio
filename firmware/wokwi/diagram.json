@@ -5,7 +5,8 @@
   "parts": [
     { "type": "board-esp32-c3-devkitm-1", "id": "esp", "top": 0, "left": 0, "attrs": {} },
     { "type": "wokwi-ili9341", "id": "lcd", "top": -120, "left": 220, "attrs": {} },
-    { "type": "wokwi-pushbutton", "id": "toque", "top": 60, "left": -160, "attrs": { "color": "red", "label": "Toque" } }
+    { "type": "wokwi-pushbutton", "id": "toque", "top": 60, "left": -160, "attrs": { "color": "red", "label": "Toque", "bounce": "0" } },
+    { "type": "wokwi-mpu6050", "id": "imu", "top": 200, "left": -150, "attrs": {} }
   ],
   "connections": [
     [ "esp:TX", "$serialMonitor:RX", "", [] ],
@@ -19,7 +20,11 @@
     [ "lcd:RST", "esp:1", "gray", [] ],
     [ "lcd:LED", "esp:3V3.1", "red", [] ],
     [ "toque:1.r", "esp:10", "yellow", [] ],
-    [ "toque:2.r", "esp:3V3.1", "red", [] ]
+    [ "toque:2.r", "esp:3V3.1", "red", [] ],
+    [ "imu:VCC", "esp:3V3.1", "red", [] ],
+    [ "imu:GND", "esp:GND.1", "black", [] ],
+    [ "imu:SDA", "esp:8", "blue", [] ],
+    [ "imu:SCL", "esp:9", "green", [] ]
   ],
   "dependencies": {}
 }
