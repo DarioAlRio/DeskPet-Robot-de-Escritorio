@@ -2,6 +2,7 @@
 #include <Adafruit_GFX.h>
 #include <SPI.h>
 #include "config.h"
+#include ROBOT
 
 #ifdef PANTALLA_WOKWI
 #include <Adafruit_ILI9341.h>
@@ -11,22 +12,18 @@ static Adafruit_ILI9341 tft(PIN_CS, PIN_DC, PIN_RST);
 static Adafruit_GC9A01A tft(PIN_CS, PIN_DC, PIN_RST);
 #endif
 
-#define RGB(r, g, b) (uint16_t)((((r) & 0xF8) << 8) | (((g) & 0xFC) << 3) | ((b) >> 3))
+#define RGB_(r, g, b) (uint16_t)((((r) & 0xF8) << 8) | (((g) & 0xFC) << 3) | ((b) >> 3))
 const uint16_t NEGRO      = 0x0000;
-const uint16_t AZUL_CLARO = RGB(110, 200, 255);  // color de la cara
-const uint16_t GRIS_BORDE = RGB(45, 45, 45);
+const uint16_t GRIS_BORDE = RGB_(45, 45, 45);
 
 // La cara se dibuja en un lienzo de 1 bit (como en una OLED) y se pinta en
-// AZUL_CLARO centrada dentro del círculo. 180×170 cabe entero en la pantalla.
+// COLOR_CARA centrada dentro del círculo. 180×170 cabe entero en la pantalla.
 #define ANCHO 180
 #define ALTO  170
 static GFXcanvas1 lienzo(ANCHO, ALTO);
 
-// Medidas de la cara (en el lienzo)
+// Las medidas de los ojos y la boca vienen del robot (robots/*.h)
 const int CENTRO_X = ANCHO / 2;
-const int SEPARACION = 40;  // del centro a cada ojo
-const int OJOS_Y = 68, OJO_ANCHO = 34, OJO_ALTO = 50;
-const int BOCA_Y = 120;
 
 // ---------------------------------------------------------------------------
 // Estado
@@ -71,7 +68,7 @@ static void curva(float cx, float cy, float ancho, float flecha, int r) {
 static void pastilla(float cx, float cy, int w, int h) {
   h = max(4, h);
   int x = lroundf(cx - w / 2.0f + despX), y = lroundf(cy - h / 2.0f + despY);
-  lienzo.fillRoundRect(x, y, w, h, min(w, h) / 2, 1);
+  lienzo.fillRoundRect(x, y, w, h, min(min(w, h) / 2, OJO_REDONDEZ), 1);
 }
 
 static void borrarTriangulo(float x0, float y0, float x1, float y1, float x2, float y2) {
@@ -307,7 +304,7 @@ static void enviar() {
   tft.startWrite();
   tft.setAddrWindow((LADO - ANCHO) / 2, OFFSET_Y + (LADO - ALTO) / 2, ANCHO, ALTO);
   for (int y = 0; y < ALTO; y++) {
-    for (int x = 0; x < ANCHO; x++) linea[x] = lienzo.getPixel(x, y) ? AZUL_CLARO : NEGRO;
+    for (int x = 0; x < ANCHO; x++) linea[x] = lienzo.getPixel(x, y) ? COLOR_CARA : NEGRO;
     tft.writePixels(linea, ANCHO);
   }
   tft.endWrite();

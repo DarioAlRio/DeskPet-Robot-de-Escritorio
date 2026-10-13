@@ -3,40 +3,38 @@
 #include "config.h"
 #include "movimiento.h"
 
-// ---------------------------------------------------------------------------
-// Cómo se ve cada emoción (ojos, boca y efectos al estilo Dasai Mochi)
-// ---------------------------------------------------------------------------
+#include ROBOT  // la cara de este robot (robots/*.h), elegida en platformio.ini
 
-enum Emocion {
-  NORMAL, CONTENTO, BURLON, SORPRENDIDO, IRRITADO, ENFADADO, FURIOSO, MAREADO,
-  ASUSTADO, PROTESTA, CURIOSO, TUMBADO_E, HACKER, ABURRIDO, DORMIDO, DESPERTANDO
-};
+// ---------------------------------------------------------------------------
+// Datos de cada emoción. Cómo se ve cada una lo decide el robot (CARAS[]).
+// ---------------------------------------------------------------------------
 
 struct DatosEmocion {
   const char *nombre;
-  Expresion cara;
   uint8_t prioridad;  // si coinciden varias, gana la más alta
   uint16_t duracion;  // ms; 0 = dura mientras se cumpla su condición
 };
 
 static const DatosEmocion EMOCIONES[] = {
-  {"Normal",      {OJOS_PASTILLA,     BOCA_SONRISA,   PARPADEA | MIRA},           0, 0},
-  {"Contento",    {OJOS_FELICES,      BOCA_GRANDE,    SALTA},                     2, 3000},
-  {"Burlón",      {OJOS_GUINO,        BOCA_LENGUA,    NADA},                      2, 2000},
-  {"Sorprendido", {OJOS_REDONDOS,     BOCA_O,         NADA},                      2, 1500},
-  {"Irritado",    {OJOS_MOLESTOS,     BOCA_RECTA,     PARPADEA},                  2, 3000},
-  {"Enfadado",    {OJOS_ENFADADOS,    BOCA_TRISTE,    PARPADEA},                  4, 3000},
-  {"Furioso",     {OJOS_ENFADADOS,    BOCA_DIENTES,   TIEMBLA},                   4, 4000},
-  {"Mareado",     {OJOS_ESPIRAL,      BOCA_ONDULADA,  NADA},                      4, 3000},
-  {"Asustado",    {OJOS_PEQUENOS,     BOCA_O_PEQUENA, TIEMBLA | SUDOR | PARPADEA}, 5, 3000},
-  {"Protesta",    {OJOS_APRETADOS,    BOCA_ONDULADA,  TIEMBLA},                   6, 0},
-  {"Curioso",     {OJOS_CURIOSOS,     BOCA_PEQUENA,   PARPADEA},                  3, 0},
-  {"Tumbado",     {OJOS_SOMNOLIENTOS, BOCA_RECTA,     PARPADEA, 0, 8},            3, 0},
-  {"Modo hacker", {OJOS_X,            BOCA_RECTA,     INTERFERENCIA},             2, 5000},
-  {"Aburrido",    {OJOS_SOMNOLIENTOS, BOCA_RECTA,     PARPADEA, 0, 10},           1, 0},
-  {"Dormido",     {OJOS_CERRADOS,     BOCA_PEQUENA,   ZZZ},                       1, 0},
-  {"Despertando", {OJOS_SOMNOLIENTOS, BOCA_BOSTEZO,   NADA},                      2, 2000},
+  {"Normal",      0, 0},
+  {"Contento",    2, 3000},
+  {"Burlón",      2, 2000},
+  {"Sorprendido", 2, 1500},
+  {"Irritado",    2, 3000},
+  {"Enfadado",    4, 3000},
+  {"Furioso",     4, 4000},
+  {"Mareado",     4, 3000},
+  {"Asustado",    5, 3000},
+  {"Protesta",    6, 0},
+  {"Curioso",     3, 0},
+  {"Tumbado",     3, 0},
+  {"Modo hacker", 2, 5000},
+  {"Aburrido",    1, 0},
+  {"Dormido",     1, 0},
+  {"Despertando", 2, 2000},
 };
+static_assert(sizeof(EMOCIONES) / sizeof(EMOCIONES[0]) == NUM_EMOCIONES, "falta alguna emoción");
+static_assert(sizeof(CARAS) / sizeof(CARAS[0]) == NUM_EMOCIONES, "al robot le falta alguna cara");
 
 
 // ---------------------------------------------------------------------------
@@ -80,7 +78,7 @@ static Emocion elegir(uint32_t ahora) {
 
 static void mostrar(Emocion e) {
   mostrada = e;
-  Expresion cara = EMOCIONES[e].cara;
+  Expresion cara = CARAS[e];
   if (e == CURIOSO) cara.mirarX = postura() == INCLINADO_DER ? 16 : -16;
   ponerCara(cara);
   Serial.printf("Emoción: %s\n", EMOCIONES[e].nombre);
@@ -114,7 +112,7 @@ void atenderEvento(Evento ev, uint32_t ahora) {
 void actualizarEmociones(uint32_t ahora) {
 #ifdef MODO_DEMO
   // Pasa por todas las caras, una cada 3 s, sin hacer caso a los sensores
-  Emocion demo = (Emocion)((ahora / 3000) % (sizeof(EMOCIONES) / sizeof(EMOCIONES[0])));
+  Emocion demo = (Emocion)((ahora / 3000) % NUM_EMOCIONES);
   if (demo != mostrada) mostrar(demo);
   actualizarCara(ahora);
   return;
