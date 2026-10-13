@@ -6,11 +6,20 @@ Un **robot de escritorio con ojos animados** que reacciona a lo que le haces: pa
 
 Inspirado en robots comerciales como Eilik o EMO, pero hecho desde cero con una ESP32-C3 y componentes de menos de 10 €.
 
+## Diseño
+
+Así es como quiero que quede: un muñeco de unos 110 mm con casco, cuya cara es la pantalla redonda de 1,28" (32 mm).
+
+<p>
+  <img src="docs/img/diseno-sentado.png" width="49%" alt="Diseño sentado">
+  <img src="docs/img/diseno-de-pie.png" width="49%" alt="Diseño de pie">
+</p>
+
 ## Cómo funciona (previsto)
 
 ```
 ┌───────────────┐                          ┌──────────────────┐                        ┌────────────────┐
-│ Sensor táctil │ ── caricia / toque ────▶ │                  │ ── dibuja los ojos ──▶ │ Pantalla 0,96" │
+│ Sensor táctil │ ── caricia / toque ────▶ │                  │ ── dibuja los ojos ──▶ │ Pantalla 1,28" │
 │    TTP223     │                          │    ESP32-C3      │                        └────────────────┘
 └───────────────┘                          │  (máquina de     │
 ┌───────────────┐                          │   estados de     │                        ┌────────────────┐
@@ -43,14 +52,14 @@ El detalle de cada fase está en [docs/plan.md](docs/plan.md).
 | Componente | Cantidad | Para qué | Precio aprox. |
 |---|---|---|---|
 | ESP32-C3 SuperMini (pines soldados) | 1 | El cerebro: anima los ojos y lee los sensores | 3,09 € |
-| Pantalla IPS 0,96" 80×160 (ST7735) | 1 | Los ojos | 1,06 € |
+| Pantalla redonda IPS 1,28" 240×240 (GC9A01) | 1 | La cara: ojos y boca | 3,29 € |
 | Sensor táctil TTP223 | 1 | Detectar caricias y toques | 0,98 € |
 | MPU6050 (GY-521) | 1 | Detectar golpes, sacudidas e inclinación | 1,80 € |
 | Amplificador MAX98357A *(opcional)* | 1 | Sonido digital (I2S) | 0,80 € |
 | Microaltavoz con caja 8 Ω *(opcional)* | 1 | Altavoz pequeño y fácil de esconder | 1,17 € |
 | Cables Dupont | — | Conexiones mientras se prueba | ~1 € |
 
-**Total:** ~7 € (~9 € con sonido). Enlaces en [docs/material.md](docs/material.md).
+**Total:** ~9 € (~11 € con sonido). Enlaces en [docs/material.md](docs/material.md).
 
 ## Documentación
 
