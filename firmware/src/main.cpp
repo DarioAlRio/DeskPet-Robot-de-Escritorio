@@ -8,6 +8,14 @@
 #include "emociones.h"
 #include "movimiento.h"
 #include "tactil.h"
+#include ROBOT
+
+#ifdef MODO_THEMOCHI  // robots de animaciones: sustituyen a las emociones
+#include "reproductor.h"
+#define iniciarEmociones iniciarReproductor
+#define atenderEvento atenderEventoReproductor
+#define actualizarEmociones actualizarReproductor
+#endif
 
 void setup() {
   Serial.begin(115200);

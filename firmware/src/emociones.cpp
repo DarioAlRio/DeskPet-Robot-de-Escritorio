@@ -4,6 +4,7 @@
 #include "movimiento.h"
 
 #include ROBOT  // la cara de este robot (robots/*.h), elegida en platformio.ini
+#ifndef MODO_THEMOCHI  // los robots de animaciones no usan emociones
 
 // ---------------------------------------------------------------------------
 // Datos de cada emoción. Cómo se ve cada una lo decide el robot (CARAS[]).
@@ -132,3 +133,5 @@ void actualizarEmociones(uint32_t ahora) {
 
   actualizarCara(ahora);
 }
+
+#endif

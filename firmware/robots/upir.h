@@ -1,6 +1,6 @@
 // Upir: reproduce en bucle la animación del repo upiir/esp32s3_oled_dasai_mochi,
-// ampliada al tamaño de la pantalla. De momento no cambia con las emociones:
-// CARAS[] (las de Mochi) solo se usa si se quita CARA_ANIMADA.
+// ampliada al tamaño de la pantalla, cuando está contento. El resto de
+// emociones usan las caras de Mochi.
 #pragma once
 #include "cara.h"
 #include "emociones.h"
@@ -21,7 +21,7 @@ const int BOCA_Y = 120;
 // Una cara por emoción, en el orden de enum Emocion (emociones.h)
 const Expresion CARAS[] = {
   {OJOS_PASTILLA,     BOCA_SONRISA,   PARPADEA | MIRA},  // Normal
-  {OJOS_FELICES,      BOCA_GRANDE,    SALTA},  // Contento
+  {OJOS_ANIMACION,    BOCA_GRANDE,    NADA},  // Contento
   {OJOS_GUINO,        BOCA_LENGUA,    NADA},  // Burlón
   {OJOS_REDONDOS,     BOCA_O,         NADA},  // Sorprendido
   {OJOS_MOLESTOS,     BOCA_RECTA,     PARPADEA},  // Irritado

@@ -1,0 +1,357 @@
+[
+ {
+  "nombre": "gundam",
+  "fotogramas": 10,
+  "ms": 2400
+ },
+ {
+  "nombre": "angry",
+  "fotogramas": 21,
+  "ms": 0
+ },
+ {
+  "nombre": "angry2",
+  "fotogramas": 22,
+  "ms": 0
+ },
+ {
+  "nombre": "angry3",
+  "fotogramas": 27,
+  "ms": 0
+ },
+ {
+  "nombre": "aot",
+  "fotogramas": 60,
+  "ms": 0
+ },
+ {
+  "nombre": "bee",
+  "fotogramas": 64,
+  "ms": 0
+ },
+ {
+  "nombre": "cry",
+  "fotogramas": 17,
+  "ms": 0
+ },
+ {
+  "nombre": "cry2",
+  "fotogramas": 31,
+  "ms": 0
+ },
+ {
+  "nombre": "cuoi_khinh_bi",
+  "fotogramas": 17,
+  "ms": 0
+ },
+ {
+  "nombre": "chong_mat",
+  "fotogramas": 45,
+  "ms": 0
+ },
+ {
+  "nombre": "dasai",
+  "fotogramas": 47,
+  "ms": 0
+ },
+ {
+  "nombre": "dasai2",
+  "fotogramas": 12,
+  "ms": 1000
+ },
+ {
+  "nombre": "mac_dinh",
+  "fotogramas": 3,
+  "ms": 5100
+ },
+ {
+  "nombre": "demon_slayer",
+  "fotogramas": 33,
+  "ms": 0
+ },
+ {
+  "nombre": "den_giao_thong",
+  "fotogramas": 36,
+  "ms": 0
+ },
+ {
+  "nombre": "den_pha",
+  "fotogramas": 111,
+  "ms": 0
+ },
+ {
+  "nombre": "devil",
+  "fotogramas": 16,
+  "ms": 0
+ },
+ {
+  "nombre": "devil_2",
+  "fotogramas": 29,
+  "ms": 0
+ },
+ {
+  "nombre": "devil_eyes",
+  "fotogramas": 34,
+  "ms": 0
+ },
+ {
+  "nombre": "distracted",
+  "fotogramas": 58,
+  "ms": 0
+ },
+ {
+  "nombre": "egg",
+  "fotogramas": 57,
+  "ms": 0
+ },
+ {
+  "nombre": "gian_du",
+  "fotogramas": 18,
+  "ms": 0
+ },
+ {
+  "nombre": "yakura",
+  "fotogramas": 30,
+  "ms": 0
+ },
+ {
+  "nombre": "hand_some",
+  "fotogramas": 25,
+  "ms": 0
+ },
+ {
+  "nombre": "happy_2",
+  "fotogramas": 13,
+  "ms": 0
+ },
+ {
+  "nombre": "hat_xi",
+  "fotogramas": 20,
+  "ms": 0
+ },
+ {
+  "nombre": "hat_xi_2",
+  "fotogramas": 36,
+  "ms": 0
+ },
+ {
+  "nombre": "hehe",
+  "fotogramas": 38,
+  "ms": 0
+ },
+ {
+  "nombre": "intro",
+  "fotogramas": 33,
+  "ms": 0
+ },
+ {
+  "nombre": "keep_it_up",
+  "fotogramas": 34,
+  "ms": 0
+ },
+ {
+  "nombre": "leu_leu",
+  "fotogramas": 23,
+  "ms": 0
+ },
+ {
+  "nombre": "love",
+  "fotogramas": 32,
+  "ms": 0
+ },
+ {
+  "nombre": "love2",
+  "fotogramas": 24,
+  "ms": 0
+ },
+ {
+  "nombre": "mochi",
+  "fotogramas": 58,
+  "ms": 0
+ },
+ {
+  "nombre": "mochidoo",
+  "fotogramas": 42,
+  "ms": 0
+ },
+ {
+  "nombre": "music",
+  "fotogramas": 14,
+  "ms": 0
+ },
+ {
+  "nombre": "neon",
+  "fotogramas": 36,
+  "ms": 0
+ },
+ {
+  "nombre": "noname",
+  "fotogramas": 34,
+  "ms": 0
+ },
+ {
+  "nombre": "nheo_mat",
+  "fotogramas": 51,
+  "ms": 0
+ },
+ {
+  "nombre": "nhin_ben_phai",
+  "fotogramas": 16,
+  "ms": 0
+ },
+ {
+  "nombre": "nhin_ben_trai",
+  "fotogramas": 15,
+  "ms": 0
+ },
+ {
+  "nombre": "nhin_xuong",
+  "fotogramas": 22,
+  "ms": 0
+ },
+ {
+  "nombre": "police",
+  "fotogramas": 33,
+  "ms": 0
+ },
+ {
+  "nombre": "pong",
+  "fotogramas": 61,
+  "ms": 0
+ },
+ {
+  "nombre": "rain",
+  "fotogramas": 29,
+  "ms": 0
+ },
+ {
+  "nombre": "sakura",
+  "fotogramas": 35,
+  "ms": 0
+ },
+ {
+  "nombre": "samurai",
+  "fotogramas": 28,
+  "ms": 0
+ },
+ {
+  "nombre": "scared",
+  "fotogramas": 15,
+  "ms": 0
+ },
+ {
+  "nombre": "sleepy",
+  "fotogramas": 36,
+  "ms": 0
+ },
+ {
+  "nombre": "smile",
+  "fotogramas": 15,
+  "ms": 0
+ },
+ {
+  "nombre": "speed",
+  "fotogramas": 101,
+  "ms": 0
+ },
+ {
+  "nombre": "star",
+  "fotogramas": 43,
+  "ms": 0
+ },
+ {
+  "nombre": "sung_nuoc",
+  "fotogramas": 25,
+  "ms": 0
+ },
+ {
+  "nombre": "sung_nuoc_2",
+  "fotogramas": 23,
+  "ms": 0
+ },
+ {
+  "nombre": "sushi",
+  "fotogramas": 45,
+  "ms": 0
+ },
+ {
+  "nombre": "turbo",
+  "fotogramas": 48,
+  "ms": 0
+ },
+ {
+  "nombre": "thong_long",
+  "fotogramas": 36,
+  "ms": 0
+ },
+ {
+  "nombre": "thu_nho",
+  "fotogramas": 15,
+  "ms": 0
+ },
+ {
+  "nombre": "up_size_down",
+  "fotogramas": 29,
+  "ms": 0
+ },
+ {
+  "nombre": "UwU",
+  "fotogramas": 23,
+  "ms": 0
+ },
+ {
+  "nombre": "wheels",
+  "fotogramas": 36,
+  "ms": 0
+ },
+ {
+  "nombre": "xi_khoi",
+  "fotogramas": 13,
+  "ms": 500
+ },
+ {
+  "nombre": "xi_lua",
+  "fotogramas": 15,
+  "ms": 0
+ },
+ {
+  "nombre": "speed2",
+  "fotogramas": 35,
+  "ms": 0
+ },
+ {
+  "nombre": "yelling",
+  "fotogramas": 40,
+  "ms": 0
+ },
+ {
+  "nombre": "car",
+  "fotogramas": 35,
+  "ms": 0
+ },
+ {
+  "nombre": "intro_3",
+  "fotogramas": 79,
+  "ms": 0
+ },
+ {
+  "nombre": "LB",
+  "fotogramas": 37,
+  "ms": 0
+ },
+ {
+  "nombre": "LB_intro",
+  "fotogramas": 48,
+  "ms": 0
+ },
+ {
+  "nombre": "LB_Star",
+  "fotogramas": 67,
+  "ms": 0
+ },
+ {
+  "nombre": "speed3",
+  "fotogramas": 38,
+  "ms": 0
+ }
+]
