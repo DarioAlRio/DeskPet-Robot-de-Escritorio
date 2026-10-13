@@ -14,7 +14,7 @@ static Adafruit_GC9A01A tft(PIN_CS, PIN_DC, PIN_RST);
 
 #define RGB(r, g, b) (uint16_t)((((r) & 0xF8) << 8) | (((g) & 0xFC) << 3) | ((b) >> 3))
 const uint16_t NEGRO      = 0x0000;
-const uint16_t ROJO       = RGB(255, 30, 40);
+const uint16_t AZUL_CLARO = RGB(110, 200, 255);  // color de la cara
 const uint16_t GRIS_BORDE = RGB(45, 45, 45);
 
 #define OJOS_ANCHO 180  // zona donde se mueven los ojos
@@ -25,12 +25,12 @@ static void dibujarBoca(GFXcanvas1 &lienzo);
 
 // ---------------------------------------------------------------------------
 // Pantalla: RoboEyes dibuja los ojos en un lienzo de 1 bit (como en una OLED),
-// aquí se añade la boca y se pinta todo en rojo, centrado dentro del círculo.
+// aquí se añade la boca y se pinta todo en azul claro, centrado dentro del círculo.
 // ---------------------------------------------------------------------------
 
 class PantallaRedonda : public GFXcanvas1 {
  public:
-  uint16_t color = ROJO;
+  uint16_t color = AZUL_CLARO;
 
   PantallaRedonda() : GFXcanvas1(OJOS_ANCHO, CARA_ALTO) {}
 
