@@ -310,6 +310,22 @@ static void enviar() {
   tft.endWrite();
 }
 
+#ifdef CARA_ANIMADA
+// Dibuja un fotograma XBM de 128×64 ampliado ×1,4 (179×90) y centrado
+static void dibujarFotograma(const unsigned char *xbm) {
+  const int W = 128, H = 64, ESCALA_X10 = 14;
+  int ancho = W * ESCALA_X10 / 10, alto = H * ESCALA_X10 / 10;
+  int x0 = (ANCHO - ancho) / 2, y0 = (ALTO - alto) / 2;
+  for (int y = 0; y < alto; y++) {
+    const unsigned char *fila = xbm + (y * 10 / ESCALA_X10) * (W / 8);
+    for (int x = 0; x < ancho; x++) {
+      int sx = x * 10 / ESCALA_X10;
+      if (pgm_read_byte(fila + sx / 8) & (1 << (sx % 8))) lienzo.drawPixel(x0 + x, y0 + y, 1);
+    }
+  }
+}
+#endif
+
 void iniciarCara() {
   tft.begin(40000000);
   tft.fillScreen(NEGRO);
@@ -337,6 +353,11 @@ void actualizarCara(uint32_t ahora) {
   }
 
   lienzo.fillScreen(0);
+#ifdef CARA_ANIMADA
+  dibujarFotograma(FOTOGRAMAS[(ahora / FOTOGRAMA_MS) % NUM_FOTOGRAMAS]);
+  enviar();
+  return;
+#endif
   // Los ojos siguen la mirada entera; la boca, la mitad
   despX = miradaX + saltoX;
   despY = miradaY + saltoY;
