@@ -112,6 +112,13 @@ void atenderEvento(Evento ev, uint32_t ahora) {
 }
 
 void actualizarEmociones(uint32_t ahora) {
+#ifdef MODO_DEMO
+  // Pasa por todas las caras, una cada 3 s, sin hacer caso a los sensores
+  Emocion demo = (Emocion)((ahora / 3000) % (sizeof(EMOCIONES) / sizeof(EMOCIONES[0])));
+  if (demo != mostrada) mostrar(demo);
+  actualizarCara(ahora);
+  return;
+#endif
   // Cambiar de postura también cuenta como hacerle caso
   if (postura() != posturaAnterior) {
     posturaAnterior = postura();
