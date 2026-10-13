@@ -17,7 +17,8 @@ enum Ojos {
   OJOS_SOMNOLIENTOS, // medio cerrados
   OJOS_CERRADOS,     // ‿ ‿ durmiendo
   OJOS_CORAZON,      // enamorado
-  OJOS_X             // x x
+  OJOS_X,            // x x
+  OJOS_ANIMACION     // animación de fotogramas del robot (sustituye ojos y boca)
 };
 
 enum Boca {
@@ -46,3 +47,7 @@ struct Expresion {
 void iniciarCara();
 void ponerCara(const Expresion &e);
 void actualizarCara(uint32_t ahora);
+
+// Pinta un fotograma de 128×64 a 1 bit (fila a fila, bit alto a la izquierda),
+// ampliado para llenar la pantalla. Lo usan los robots de animaciones.
+void mostrarFotograma(const uint8_t *bits);
