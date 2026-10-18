@@ -7,6 +7,7 @@
 #include "themochi_animaciones.h"
 
 static const Animacion *actual = nullptr;
+static const Animacion *ultimaAleatoria = nullptr;
 static bool enBucle = false;          // la cara por defecto se repite; las demás van una vez
 static uint16_t fotograma = 0;
 static uint32_t siguienteFotograma = 0, siguienteAleatoria = 0;
@@ -43,7 +44,9 @@ static void descomprimir() {
   }
 }
 
-static bool aleatoriaValida(const Animacion *a) {
+static bool aleatoriaValida(const Animacion *a, const Animacion *anterior) {
+  if (a == anterior) return false;  // que no salga la misma dos veces seguidas
+  if (strcmp(a->nombre, ANIM_INTRO) == 0 || strcmp(a->nombre, ANIM_DEFECTO) == 0) return false;
   for (const char *n : NO_ALEATORIAS)
     if (strcmp(a->nombre, n) == 0) return false;
   return true;
@@ -73,7 +76,8 @@ void actualizarReproductor(uint32_t ahora) {
   // En reposo, de vez en cuando una animación al azar
   if (enBucle && ahora >= siguienteAleatoria) {
     const Animacion *a;
-    do a = &ANIMACIONES[random(NUM_ANIMACIONES)]; while (!aleatoriaValida(a));
+    do a = &ANIMACIONES[random(NUM_ANIMACIONES)]; while (!aleatoriaValida(a, ultimaAleatoria));
+    ultimaAleatoria = a;
     poner(a, false, ahora);
   }
   if (ahora < siguienteFotograma) return;

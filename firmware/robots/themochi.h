@@ -24,5 +24,5 @@ const char *const ANIM_TOQUE_LARGO = "love";
 const uint32_t PAUSA_MS = 5000;  // gif_delay: tiempo en reposo entre animaciones
 const float VELOCIDAD = 1.0;     // gif_speed: 2 = el doble de rápido
 
-// Las que nunca salen al azar
-const char *const NO_ALEATORIAS[] = {"intro_3", "LB_intro", "mac_dinh"};
+// Las que nunca salen al azar, además de ANIM_INTRO y ANIM_DEFECTO
+const char *const NO_ALEATORIAS[] = {"LB_intro"};
