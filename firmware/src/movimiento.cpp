@@ -11,6 +11,7 @@ const float UMBRAL_FUERTE   = 1.5f;   // g: golpe fuerte
 const int   PICOS_SACUDIDA  = 4;      // picos en 1 s = sacudida
 const float UMBRAL_LEVANTAR = 1.25f;  // g total mantenido = lo están subiendo
 const uint32_t LEVANTAR_MS = 100, POSTURA_MS = 400;
+const uint32_t REINTENTO_MS = 5000;   // cada cuánto se busca el sensor si no está
 
 static const char *NOMBRE_POSTURA[] = {"de pie", "inclinado izq.", "inclinado der.", "tumbado", "boca abajo"};
 
@@ -20,7 +21,7 @@ static Postura actual = DE_PIE, candidata = DE_PIE;
 static uint32_t candidataDesde = 0, ultimaLectura = 0, ultimoPico = 0, ultimoGolpe = 0;
 static uint32_t picos[PICOS_SACUDIDA] = {0};
 static int siguientePico = 0;
-static uint32_t subiendoDesde = 0, ultimoLevantado = 0;
+static uint32_t subiendoDesde = 0, ultimoLevantado = 0, ultimoIntento = 0;
 
 static void escribir(uint8_t reg, uint8_t valor) {
   Wire.beginTransmission(MPU_DIR);
@@ -29,16 +30,18 @@ static void escribir(uint8_t reg, uint8_t valor) {
   Wire.endTransmission();
 }
 
-void iniciarMovimiento() {
-  Wire.begin(PIN_SDA, PIN_SCL);
+static bool detectar() {
   Wire.beginTransmission(MPU_DIR);
-  ok = Wire.endTransmission() == 0;
-  if (!ok) {
-    Serial.println("MPU6050 no encontrado: solo funcionará el táctil");
-    return;
-  }
+  if (Wire.endTransmission() != 0) return false;
   escribir(0x6B, 0x00);  // despertar
   escribir(0x1C, 0x10);  // acelerómetro a ±8 g
+  return true;
+}
+
+void iniciarMovimiento() {
+  Wire.begin(PIN_SDA, PIN_SCL);
+  ok = detectar();
+  if (!ok) Serial.println("MPU6050 no encontrado: solo funcionará el táctil (se reintenta cada 5 s)");
 }
 
 static bool leerAcelerometro(float &ax, float &ay, float &az) {
@@ -67,7 +70,15 @@ static Postura calcularPostura() {
 Postura postura() { return actual; }
 
 Evento leerMovimiento(uint32_t ahora) {
-  if (!ok || ahora - ultimaLectura < 10) return NINGUNO;  // 100 lecturas por segundo
+  // Si no estaba (p. ej. un cable flojo), se vuelve a buscar de vez en cuando
+  if (!ok) {
+    if (ahora - ultimoIntento < REINTENTO_MS) return NINGUNO;
+    ultimoIntento = ahora;
+    ok = detectar();
+    if (!ok) return NINGUNO;
+    Serial.println("MPU6050 encontrado");
+  }
+  if (ahora - ultimaLectura < 10) return NINGUNO;  // 100 lecturas por segundo
   ultimaLectura = ahora;
   float ax, ay, az;
   if (!leerAcelerometro(ax, ay, az)) return NINGUNO;
