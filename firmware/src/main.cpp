@@ -19,6 +19,8 @@
 
 void setup() {
   Serial.begin(115200);
+  // Sin esto random() da la misma secuencia en cada arranque
+  randomSeed(esp_random());
   iniciarTactil();
   iniciarMovimiento();
   iniciarEmociones();
