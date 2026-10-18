@@ -23,10 +23,12 @@ BYTES = ANCHO * ALTO // 8
 
 def fotogramas(ruta):
     gif = Image.open(ruta)
-    escala = gif.width // ANCHO
+    if gif.width * ALTO != gif.height * ANCHO:
+        print(f"Aviso: {os.path.basename(ruta)} mide {gif.width}x{gif.height}, "
+              f"no es 2:1 y se verá deformado", file=sys.stderr)
     for f in ImageSequence.Iterator(gif):
         img = f.convert("L")
-        if escala > 1:
+        if img.size != (ANCHO, ALTO):
             img = img.resize((ANCHO, ALTO), Image.NEAREST)
         bits = img.point(lambda v: 255 if v > 127 else 0).convert("1").tobytes()
         yield bits, f.info.get("duration", 100)
@@ -51,7 +53,14 @@ def comprimir(cambios):
 
 
 def main():
-    indice = json.load(open(os.path.join(ORIGEN, "indice.json"), encoding="utf-8"))
+    with open(os.path.join(ORIGEN, "indice.json"), encoding="utf-8") as f:
+        indice = json.load(f)
+    faltan = [a["nombre"] for a in indice
+              if not os.path.exists(os.path.join(ORIGEN, a["nombre"] + ".gif"))]
+    if faltan:
+        print("Faltan estos GIF en animaciones/themochi/: " + ", ".join(faltan), file=sys.stderr)
+        return 1
+
     partes, tabla, total = [], [], 0
     for n, anim in enumerate(indice):
         nombre = anim["nombre"]
