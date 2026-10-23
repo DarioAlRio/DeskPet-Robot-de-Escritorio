@@ -17,6 +17,18 @@ Borrador. Se confirmará en la fase 1 con la placa real: los pines de la ESP32-C
 
 Algunos módulos GC9A01 no traen pin BLK; en ese caso la retroiluminación va siempre encendida.
 
+## Pantalla OLED 0,96" (I2C, SSD1306) *(alternativa a la redonda)*
+
+Rectangular, 128×64, 4 pines. Comparte los dos cables del I2C con el MPU6050.
+En PlatformIO se usan los entornos `<robot>-oled` (por ejemplo `themochi-oled`).
+
+| OLED | ESP32-C3 |
+|---|---|
+| GND | GND |
+| VCC | 3V3 |
+| SCL | GPIO 9 |
+| SDA | GPIO 8 |
+
 ## MPU6050 (I2C)
 
 | MPU6050 | ESP32-C3 |

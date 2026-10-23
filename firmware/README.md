@@ -4,7 +4,7 @@ Código de la ESP32-C3 (C++ con Arduino sobre PlatformIO).
 
 ```
 firmware/
-├── platformio.ini   Un entorno por robot: <nombre> (real) y wokwi-<nombre> (simulador)
+├── platformio.ini   Un entorno por robot: <nombre> (pantalla redonda), <nombre>-oled (OLED 0,96") y wokwi-<nombre> (simulador)
 ├── robots/          La cara de cada robot: mochi.h, malvado.h, clasico.h, upir.h (animación de upiir), themochi.h (animaciones de The Mochi)
 ├── scripts/         copiar_wokwi.py: deja el último robot compilado listo para Wokwi
 ├── wokwi.toml       Configuración del simulador Wokwi para VS Code

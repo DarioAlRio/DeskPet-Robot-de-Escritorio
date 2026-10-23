@@ -4,7 +4,12 @@
 #include "config.h"
 #include ROBOT
 
-#ifdef PANTALLA_WOKWI
+#if defined(PANTALLA_OLED)
+// OLED de 0,96" (SSD1306, 128×64, I2C): comparte SDA/SCL con el MPU6050
+#include <Wire.h>
+#include <Adafruit_SSD1306.h>
+static Adafruit_SSD1306 oled(128, 64, &Wire, -1);
+#elif defined(PANTALLA_WOKWI)
 #include <Adafruit_ILI9341.h>
 static Adafruit_ILI9341 tft(PIN_CS, PIN_DC, PIN_RST);
 #else
@@ -297,6 +302,32 @@ static void animar(uint32_t ahora) {
 // ---------------------------------------------------------------------------
 
 // Envía el lienzo solo si ha cambiado desde la última vez
+#ifdef PANTALLA_OLED
+// La cara se dibuja a 180×170; en la OLED se coge la franja donde están ojos
+// y boca (120 px de alto) y se reduce a 64 px de alto. Un píxel de la OLED se
+// enciende si cualquiera de los que le tocan en el lienzo está encendido, para
+// que los trazos finos no desaparezcan.
+static void enviar() {
+  static uint8_t anterior[(ANCHO + 7) / 8 * ALTO];
+  if (memcmp(anterior, lienzo.getBuffer(), sizeof(anterior)) == 0) return;
+  memcpy(anterior, lienzo.getBuffer(), sizeof(anterior));
+
+  const int ARRIBA = 25, FRANJA = 120, SAL_ALTO = 64;
+  const int SAL_ANCHO = ANCHO * SAL_ALTO / FRANJA, X0 = (128 - SAL_ANCHO) / 2;
+  oled.clearDisplay();
+  for (int y = 0; y < SAL_ALTO; y++) {
+    int y0 = ARRIBA + y * FRANJA / SAL_ALTO, y1 = ARRIBA + (y + 1) * FRANJA / SAL_ALTO;
+    for (int x = 0; x < SAL_ANCHO; x++) {
+      int x0 = x * ANCHO / SAL_ANCHO, x1 = (x + 1) * ANCHO / SAL_ANCHO;
+      bool encendido = false;
+      for (int sy = y0; sy < y1 && !encendido; sy++)
+        for (int sx = x0; sx < x1 && !encendido; sx++) encendido = lienzo.getPixel(sx, sy);
+      if (encendido) oled.drawPixel(X0 + x, y, SSD1306_WHITE);
+    }
+  }
+  oled.display();
+}
+#else
 static void enviar() {
   static uint8_t anterior[(ANCHO + 7) / 8 * ALTO];
   if (memcmp(anterior, lienzo.getBuffer(), sizeof(anterior)) == 0) return;
@@ -311,6 +342,7 @@ static void enviar() {
   }
   tft.endWrite();
 }
+#endif
 
 #ifdef CARA_ANIMADA
 // Dibuja un fotograma XBM de 128×64 ampliado ×1,4 (179×90) y centrado
@@ -329,6 +361,12 @@ static void dibujarFotograma(const unsigned char *xbm) {
 #endif
 
 void mostrarFotograma(const uint8_t *bits) {
+#ifdef PANTALLA_OLED
+  // Misma resolución que la OLED: se pinta tal cual
+  oled.clearDisplay();
+  oled.drawBitmap(0, 0, bits, 128, 64, SSD1306_WHITE);
+  oled.display();
+#else
   const int W = 128, H = 64, ESCALA_X10 = 14;  // ×1,4 → 179×89
   int ancho = W * ESCALA_X10 / 10, alto = H * ESCALA_X10 / 10;
   int x0 = (ANCHO - ancho) / 2, y0 = (ALTO - alto) / 2;
@@ -341,12 +379,21 @@ void mostrarFotograma(const uint8_t *bits) {
     }
   }
   enviar();
+#endif
 }
 
 void iniciarCara() {
+#ifdef PANTALLA_OLED
+  Wire.begin(PIN_SDA, PIN_SCL);
+  Wire.setClock(400000);  // un fotograma entero tarda ~25 ms
+  if (!oled.begin(SSD1306_SWITCHCAPVCC, 0x3C)) Serial.println("No encuentro la OLED (0x3C)");
+  oled.clearDisplay();
+  oled.display();
+#else
   tft.begin(40000000);
   tft.fillScreen(NEGRO);
   tft.drawCircle(LADO / 2, OFFSET_Y + LADO / 2, LADO / 2 - 1, GRIS_BORDE);  // borde de la pantalla redonda
+#endif
 }
 
 void ponerCara(const Expresion &e) {
